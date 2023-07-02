@@ -45,10 +45,14 @@ val_add:
 
     ; Function: add(x, y) - adds two numbers
     ; Arguments:
-    ;   x: EDI
-    ;   y: ESI
-    add edi, esi        ; perform the addition
-    mov eax, edi        ; store the result in EAX
+    ;   x: ECX
+    ;   y: EDX
+
+    ; Perform the addition
+    add ecx, edx               ; perform the addition
+
+    ; Store the result in EAX
+    mov eax, ecx               ; store the result in EAX
 
     ; Clean up and return to the calling program
     mov rsp, rbp
