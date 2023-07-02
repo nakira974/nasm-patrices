@@ -4,7 +4,6 @@ project(nasm-practices C)
 # Add NASM source files
 set(ASM_SOURCES
         ${CMAKE_SOURCE_DIR}/add.asm
-        ${CMAKE_SOURCE_DIR}/main.asm
         # Add more .asm files here...
         )
 
@@ -14,7 +13,7 @@ foreach(ASM_SOURCE ${ASM_SOURCES})
     get_filename_component(ASM_BASENAME ${ASM_SOURCE} NAME_WE)
 
     # Build command for assembling the .asm file for Win64
-    set(NASM_COMMAND nasm -f win64 -o ${ASM_BASENAME}.obj ${ASM_SOURCE})
+    set(NASM_COMMAND nasm -f win64 -o ${CMAKE_BINARY_DIR}/${ASM_BASENAME}.obj ${ASM_SOURCE})
 
     # Execute the NASM command
     execute_process(
@@ -32,10 +31,17 @@ foreach(ASM_SOURCE ${ASM_SOURCES})
     message(STATUS "Assembled ${ASM_SOURCE} successfully")
 endforeach()
 
-# Add a dummy C source file with a main function
-add_executable(${PROJECT_NAME} main.cpp)
+file(GLOB ASM_EXTERNAL_OBJECTS
+        ${CMAKE_BINARY_DIR}/*.obj
+        )
 
-# Set the appropriate linker flags for Windows
-if (WIN32)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ENTRY:main /SUBSYSTEM:CONSOLE")
-endif()
+# Add a dummy C source file with a main function
+add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS})
+
+SET_SOURCE_FILES_PROPERTIES(
+        ${ASM_EXTERNAL_OBJECTS}
+        PROPERTIES
+        EXTERNAL_OBJECT true
+        GENERATED true
+)
+
