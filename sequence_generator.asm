@@ -5,7 +5,7 @@
 
 
 section .data
-    format db "%d", 10, 0       ; Use %d format specifier for integers
+    format db "%s", 10, 0       ; Use %d format specifier for integers
     number db 32                ; Buffer size for the number
     message db "Enter a number: ",10, 0
 
@@ -19,19 +19,18 @@ generate_sequence:
     sub rsp, 8                ; Align stack
 
     ; Print the message
-    mov rdi, number            ; Pass the number as the first argument to printf
-    mov rsi, format            ; Pass the format string as the second argument to printf
-    xor rax, rax              ; Clear rax (used as placeholder for printf return value)
+    lea rcx, [message]         ; Pass the message as the first argument to printf
+    mov rdx, 0                 ; No floating-point values to print
     call printf
 
     ; Read input from the user
-    lea rdi, [number]
-    mov rsi, format
-    xor rax, rax              ; Clear rax (used as placeholder for scanf return value)
+    lea rcx, [number]
+    lea rdx, [format]
+    xor eax, eax              ; Clear rax (used as placeholder for scanf return value)
     call scanf
 
     ; Cast the input to an integer using atoi
-    mov rdi, [number]
+    mov rcx, qword [number]
     call atoi
 
     ; TODO: Store the resulting integer and perform further operations

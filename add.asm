@@ -17,6 +17,12 @@ ref_add:
     ;   x_ptr: RDI
     ;   y_ptr: RSI
 
+    ; Check if x_ptr or y_ptr is null
+    test rdi, rdi   ; Check if x_ptr is null
+    je .null_pointer_error
+    test rsi, rsi   ; Check if y_ptr is null
+    je .null_pointer_error
+
     ; Load the values at the memory addresses
     mov eax, dword [rdi]       ; load x value into EAX
     mov ebx, dword [rsi]       ; load y value into EBX
@@ -37,7 +43,12 @@ ref_add:
     mov rsp, rbp
     pop rbp
     ret
-
+.null_pointer_error:  ; Handle null pointer error
+    ; Print an error message or handle the error as desired
+    ; Clean up and return to the calling program
+    mov rsp, rbp
+    pop rbp
+    ret
 
 val_add:
     ; Save the base pointer and set up a new stack frame
@@ -59,3 +70,5 @@ val_add:
     mov rsp, rbp
     pop rbp
     ret
+
+
