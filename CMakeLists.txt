@@ -4,6 +4,7 @@ project(nasm-practices C)
 # Add NASM source files
 set(ASM_SOURCES
         ${CMAKE_SOURCE_DIR}/add.asm
+        ${CMAKE_SOURCE_DIR}/sequence_generator.asm
         # Add more .asm files here...
         )
 
@@ -37,6 +38,11 @@ file(GLOB ASM_EXTERNAL_OBJECTS
 
 # Add a dummy C source file with a main function
 add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS})
+
+if(MSVC)
+    # Link the required libraries
+    target_link_libraries(${PROJECT_NAME} PRIVATE kernel32 ucrt)
+endif()
 
 SET_SOURCE_FILES_PROPERTIES(
         ${ASM_EXTERNAL_OBJECTS}

@@ -1,6 +1,7 @@
 ; author: Maxime LOUKHAL
 ; since : 07/01/2023
 ; summary : Multiple ways to add things in x64 windows NASM
+; version : 1.0
 
 section .text
     global val_add         ; make the 'val_add' function globally accessible
