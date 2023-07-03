@@ -1,6 +1,7 @@
 ; author: Maxime LOUKHAL
 ; since : 07/01/2023
 ; summary : Multiple ways to add things in x64 windows NASM
+; version : 1.0
 
 section .text
     global val_add         ; make the 'val_add' function globally accessible
@@ -45,10 +46,14 @@ val_add:
 
     ; Function: add(x, y) - adds two numbers
     ; Arguments:
-    ;   x: EDI
-    ;   y: ESI
-    add edi, esi        ; perform the addition
-    mov eax, edi        ; store the result in EAX
+    ;   x: ECX
+    ;   y: EDX
+
+    ; Perform the addition
+    add ecx, edx               ; perform the addition
+
+    ; Store the result in EAX
+    mov eax, ecx               ; store the result in EAX
 
     ; Clean up and return to the calling program
     mov rsp, rbp

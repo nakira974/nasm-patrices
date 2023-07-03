@@ -4,6 +4,7 @@ project(nasm-practices C)
 # Add NASM source files
 set(ASM_SOURCES
         ${CMAKE_SOURCE_DIR}/add.asm
+        ${CMAKE_SOURCE_DIR}/sequence_generator.asm
         # Add more .asm files here...
         )
 
@@ -37,6 +38,14 @@ file(GLOB ASM_EXTERNAL_OBJECTS
 
 # Add a dummy C source file with a main function
 add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS})
+
+if(MSVC)
+    # Set the linker option to ignore the default library conflict
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRTD /LARGEADDRESSAWARE:NO")
+
+    # Link the necessary libraries
+    target_link_libraries(${PROJECT_NAME} PRIVATE msvcrt legacy_stdio_definitions)
+endif()
 
 SET_SOURCE_FILES_PROPERTIES(
         ${ASM_EXTERNAL_OBJECTS}

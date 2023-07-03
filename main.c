@@ -6,8 +6,11 @@
 
 extern int val_add(int x, int y);
 extern int ref_add(int *x_ptr, int *y_ptr);
+extern int generate_sequence();
 
 int main(int argc, char** argv){
+
+    generate_sequence();
     int x = 10;
     int y = 20;
     int result;
