@@ -40,8 +40,11 @@ file(GLOB ASM_EXTERNAL_OBJECTS
 add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS})
 
 if(MSVC)
-    # Link the required libraries
-    target_link_libraries(${PROJECT_NAME} PRIVATE kernel32 ucrt)
+    # Set the linker option to ignore the default library conflict
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRTD /LARGEADDRESSAWARE:NO")
+
+    # Link the necessary libraries
+    target_link_libraries(${PROJECT_NAME} PRIVATE msvcrt legacy_stdio_definitions)
 endif()
 
 SET_SOURCE_FILES_PROPERTIES(
