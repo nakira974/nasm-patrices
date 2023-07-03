@@ -5,8 +5,8 @@
 
 
 section .data
-    format db "%s", 10, 0
-    number db 32               ; Increase buffer size to 32 bytes
+    format db "%d", 10, 0       ; Use %d format specifier for integers
+    number db 32                ; Buffer size for the number
     message db "Enter a number: ",10, 0
 
 section .text
@@ -19,15 +19,15 @@ generate_sequence:
     sub rsp, 8                ; Align stack
 
     ; Print the message
-    mov rdi, message
-    mov rsi, format            ; Swap the values of rdi and rsi
-    xor rax, rax               ; Clear rax (used as placeholder for printf return value)
+    mov rdi, number            ; Pass the number as the first argument to printf
+    mov rsi, format            ; Pass the format string as the second argument to printf
+    xor rax, rax              ; Clear rax (used as placeholder for printf return value)
     call printf
 
     ; Read input from the user
     lea rdi, [number]
     mov rsi, format
-    xor rax, rax               ; Clear rax (used as placeholder for scanf return value)
+    xor rax, rax              ; Clear rax (used as placeholder for scanf return value)
     call scanf
 
     ; Cast the input to an integer using atoi
@@ -36,6 +36,6 @@ generate_sequence:
 
     ; TODO: Store the resulting integer and perform further operations
 
-    add rsp, 8                ; Restore stack
-    xor eax, eax              ; Set exit code to 0
+    add rsp, 8               ; Restore stack
+    xor eax, eax             ; Set exit code to 0
     ret
