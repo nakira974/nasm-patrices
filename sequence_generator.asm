@@ -5,12 +5,13 @@
 
 
 section .data
-    format db "%d", 0       ; Use %d format specifier for integers
+    format db "%d", 0
     input_message db "Enter a number: ",  0
     sequence_length_message db "Sequence lenght: %d", 10, 0
     generated_sequence_message db "Generated sequence: ", 10, 0
 
 section .bss
+    element_size resb 4                   ; Buffer size for the number (assume 32-bit integer)
     number resb 4                 ; Buffer size for the number (assume 32-bit integer)
     sequence resq 1               ; Reserved space for the returned sequence
 
@@ -22,8 +23,15 @@ section .text
     global generate_sequence
 
 generate_sequence:
-    push rbp             ; Preserve rbp on the stack
-    mov rbp, rsp         ; Set rbp as a base pointer for local variables
+    ; Save the base pointer and set up a new stack frame
+    push rbp
+    mov rbp, rsp
+
+    ; Function: generate_sequence(element_size) - Generate a generic sequence of numbers from 1 to size and then reverse it
+    ; Arguments:
+    ;   element_size: ECX
+
+    mov qword [element_size], rcx
 
     ; Print the message
     lea rcx, [input_message]   ; Pass the message as the first argument to printf
@@ -38,29 +46,32 @@ generate_sequence:
 
     ; Print the sequence length
     lea rcx, [sequence_length_message]
+    add qword [number], 1               ; Add 1 to the input number to account for the sequence length
     mov rdx, qword [number]
     call printf
 
     ; Allocate memory for the sequence
     mov rax, qword [number]   ; Get the input number
-    imul rax, 4               ; Calculate the total number of bytes needed (assuming int is 4 bytes)
+    imul rax, element_size    ; Calculate the total number of bytes needed (assuming int is 4 bytes for example)
     sub rsp, 8                ; Align the stack on a 16-byte boundary
     push rax                  ; Save the calculated size on the stack
     call malloc               ; Allocate memory for the sequence
     add rsp, 16               ; Clean up the stack (remove the allocated size and alignment adjustment)
 
+    ; Store the sequence length at the beginning of the allocated memory
+    mov qword [sequence],  number
 
     ; Generate the sequence in reverse order
-    mov ecx, dword [number] ; Use ecx as a counter
-    mov rdx, 0              ; Initialize index (edx) to 1
-
+    mov ecx, dword [number]     ; Use ecx as a counter
+    mov rdx, 0                  ; Initialize index (edx) to 1
+    mov r12,qword[element_size] ; Store the element size in r12
     generate_loop:
-        mov qword [sequence + 4 * rdx], rcx   ; Store the current value in the sequence
-        dec ecx                                   ; Decrease the counter
-        inc rdx                                   ; Increase the index
-        cmp ecx, 0                                ; Check if the counter has reached one
-        jg generate_loop                          ; Jump back to the loop if it hasn't
-        mov rsp, rbp                              ; Restore the stack pointer
-        pop rbp                                   ; Restore rbp
-        mov rax, qword [sequence]                 ; Move the address of the allocated memory to rdi (as int* type)
-        ret                                       ; Return from the function
+        mov qword [sequence + r12*1 + rdx *1], rcx     ; Store the current value in the sequence
+        dec ecx                                          ; Decrease the counter
+        inc rdx                                          ; Increase the index
+        cmp ecx, 0                                       ; Check if the counter has reached one
+        jg generate_loop                                 ; Jump back to the loop if it hasn't
+        mov rax, qword [sequence]                        ; Move the address of the allocated memory to rdi (as int* type)
+        mov rsp, rbp                                     ; Restore the stack pointer
+        pop rbp                                          ; Restore rbp
+        ret                                              ; Return from the function
