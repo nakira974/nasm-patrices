@@ -5,9 +5,9 @@
 
 
 section .data
-    format db "%s", 10, 0       ; Use %d format specifier for integers
+    format db "%d", 0       ; Use %d format specifier for integers
     number db 32                ; Buffer size for the number
-    message db "Enter a number: ",10, 0
+    message db "Enter a number: ", 0
 
 section .text
     extern printf
@@ -26,12 +26,9 @@ generate_sequence:
     ; Read input from the user
     lea rcx, [number]
     lea rdx, [format]
-    xor eax, eax              ; Clear rax (used as placeholder for scanf return value)
+    xor rax, rax              ; Clear rax (used as placeholder for scanf return value)
     call scanf
 
-    ; Cast the input to an integer using atoi
-    mov rcx, qword [number]
-    call atoi
 
     ; TODO: Store the resulting integer and perform further operations
 

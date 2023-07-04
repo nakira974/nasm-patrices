@@ -9,11 +9,14 @@ extern int ref_add(int *x_ptr, int *y_ptr);
 extern int generate_sequence();
 
 int main(int argc, char** argv){
-
-    generate_sequence();
     int x = 10;
     int y = 20;
     int result;
+
+
+    // Call the generate_sequence function
+    generate_sequence();
+
 
     // Call the val_add function
     result = val_add(x, y);
@@ -22,6 +25,7 @@ int main(int argc, char** argv){
     // Call the ref_add function
     result = ref_add(&x, &y);
     printf("ref_add result: %d\n", result);
+
 
     return 0;
 }
