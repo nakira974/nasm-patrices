@@ -6,7 +6,7 @@
 
 extern int val_add(int x, int y);
 extern int ref_add(int *x_ptr, int *y_ptr);
-extern int generate_sequence();
+extern int* generate_sequence();
 
 int main(int argc, char** argv){
     int x = 10;
@@ -15,8 +15,7 @@ int main(int argc, char** argv){
 
 
     // Call the generate_sequence function
-    generate_sequence();
-
+    int * sequence = generate_sequence();
 
     // Call the val_add function
     result = val_add(x, y);
