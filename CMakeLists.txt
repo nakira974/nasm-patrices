@@ -37,7 +37,7 @@ file(GLOB ASM_EXTERNAL_OBJECTS
         )
 
 # Add a dummy C source file with a main function
-add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS})
+add_executable(${PROJECT_NAME} main.c ${ASM_EXTERNAL_OBJECTS} LICENSE)
 
 if(MSVC)
     # Set the linker option to ignore the default library conflict
