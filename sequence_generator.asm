@@ -13,7 +13,6 @@ section .data
 section .bss
     element_size resb 4                   ; Buffer size for the number (assume 32-bit integer)
     number resb 4                 ; Buffer size for the number (assume 32-bit integer)
-    sequence resq 1               ; Reserved space for the returned sequence
 
 section .text
     extern printf
@@ -59,19 +58,25 @@ generate_sequence:
     add rsp, 16               ; Clean up the stack (remove the allocated size and alignment adjustment)
 
     ; Store the sequence length at the beginning of the allocated memory
-    mov qword [sequence],  number
+    mov edi, eax           ; Copy the address returned by malloc from rax to the sequence variable
+    mov dword [edi],  number ; Store the sequence length at the beginning of the allocated memory
 
     ; Generate the sequence in reverse order
     mov ecx, dword [number]     ; Use ecx as a counter
-    mov rdx, 0                  ; Initialize index (edx) to 1
-    mov r12,qword[element_size] ; Store the element size in r12
+    mov edx, 0                  ; Initialize index (edx) to 1
+    mov eax, dword [element_size]     ; Store the element size in r12
     generate_loop:
-        mov qword [sequence + r12*1 + rdx *1], rcx     ; Store the current value in the sequence
+        ; calculate the effective address
+        imul eax, ecx
+        lea ebx, [edi + eax-1]
+
+        ; write a value (42) at the specified address
+        mov dword [ebx], ecx
         dec ecx                                          ; Decrease the counter
-        inc rdx                                          ; Increase the index
+        inc edx                                          ; Increase the index
         cmp ecx, 0                                       ; Check if the counter has reached one
         jg generate_loop                                 ; Jump back to the loop if it hasn't
-        mov rax, qword [sequence]                        ; Move the address of the allocated memory to rdi (as int* type)
+        mov rbx, rax                                     ; Move the address of the allocated memory to rdi (as int* type)
         mov rsp, rbp                                     ; Restore the stack pointer
         pop rbp                                          ; Restore rbp
         ret                                              ; Return from the function
