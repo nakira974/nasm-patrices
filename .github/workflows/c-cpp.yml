@@ -17,7 +17,7 @@ jobs:
       run: choco install nasm
 
     - name: Verify nasm
-      run: nasm -v
+      run: refreshenv | nasm -v
 
     - name: Configure CMake
       run: mkdir build | cmake -B ${{github.workspace}}/build -G "Ninja"
